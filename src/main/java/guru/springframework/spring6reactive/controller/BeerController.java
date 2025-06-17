@@ -4,6 +4,7 @@ import guru.springframework.spring6reactive.model.BeerDTO;
 import guru.springframework.spring6reactive.service.BeerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,5 +67,11 @@ public class BeerController {
                                                  @RequestBody BeerDTO beerDTO) {
         return beerService.patchBeer(beerId, beerDTO)
                 .map(_ -> ResponseEntity.noContent().build());
+    }
+
+    @DeleteMapping(BEER_PATH_ID)
+    Mono<ResponseEntity<Void>> deleteById(@PathVariable("beerId") Integer beerId){
+        return beerService.deleteById(beerId)
+                .thenReturn(ResponseEntity.noContent().build());
     }
 }
