@@ -1,5 +1,7 @@
 package guru.springframework.spring6reactive.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.springframework.spring6reactive.config.DatabaseConfig;
 import guru.springframework.spring6reactive.domain.Customer;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,13 @@ public class CustomerRepositoryTest {
 
     @Autowired
     CustomerRepository customerRepository;
+
+    @Test
+    void testCreateJson() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        System.out.println(objectMapper.writeValueAsString(createTestCustomer()));
+    }
 
     @Test
     void saveNewCustomer() {

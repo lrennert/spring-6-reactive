@@ -6,6 +6,7 @@ import guru.springframework.spring6reactive.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +18,18 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Flux<CustomerDTO> listCustomers() {
         return customerRepository.findAll()
+                .map(customerMapper::customerToCustomerDto);
+    }
+
+    @Override
+    public Mono<CustomerDTO> getCustomerById(Integer customerId) {
+        return customerRepository.findById(customerId)
+                .map(customerMapper::customerToCustomerDto);
+    }
+
+    @Override
+    public Mono<CustomerDTO> saveNewCustomer(CustomerDTO customerDTO) {
+        return customerRepository.save(customerMapper.customerDtoToCustomer(customerDTO))
                 .map(customerMapper::customerToCustomerDto);
     }
 }
