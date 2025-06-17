@@ -4,6 +4,7 @@ import guru.springframework.spring6reactive.model.BeerDTO;
 import guru.springframework.spring6reactive.service.BeerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,7 +37,7 @@ public class BeerController {
     }
 
     @PostMapping(BEER_PATH)
-    Mono<ResponseEntity<Void>> createNewBeer(@RequestBody BeerDTO beerDTO) {
+    Mono<ResponseEntity<Void>> createNewBeer(@Validated @RequestBody BeerDTO beerDTO) {
         return beerService.saveNewBeer(beerDTO)
                 .map(savedDto -> ResponseEntity
                         .created(UriComponentsBuilder
@@ -48,7 +49,7 @@ public class BeerController {
 
     @PutMapping(BEER_PATH_ID)
     Mono<ResponseEntity<Void>> updateExistingBeer(@PathVariable("beerId") Integer beerId,
-                                                  @RequestBody BeerDTO beerDTO) {
+                                                  @Validated @RequestBody BeerDTO beerDTO) {
         return beerService.updateBeer(beerId, beerDTO)
                 .map(_ -> ResponseEntity.noContent().build());
     }
@@ -64,13 +65,13 @@ public class BeerController {
 
     @PatchMapping(BEER_PATH_ID)
     Mono<ResponseEntity<Void>> patchExistingBeer(@PathVariable("beerId") Integer beerId,
-                                                 @RequestBody BeerDTO beerDTO) {
+                                                 @Validated @RequestBody BeerDTO beerDTO) {
         return beerService.patchBeer(beerId, beerDTO)
                 .map(_ -> ResponseEntity.noContent().build());
     }
 
     @DeleteMapping(BEER_PATH_ID)
-    Mono<ResponseEntity<Void>> deleteById(@PathVariable("beerId") Integer beerId){
+    Mono<ResponseEntity<Void>> deleteById(@PathVariable("beerId") Integer beerId) {
         return beerService.deleteById(beerId)
                 .thenReturn(ResponseEntity.noContent().build());
     }
