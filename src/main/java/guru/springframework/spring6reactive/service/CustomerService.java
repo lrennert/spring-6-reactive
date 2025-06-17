@@ -11,4 +11,8 @@ public interface CustomerService {
     Mono<CustomerDTO> getCustomerById(Integer customerId);
 
     Mono<CustomerDTO> saveNewCustomer(CustomerDTO customerDTO);
+
+    Mono<CustomerDTO> updateCustomer(Integer customerId, CustomerDTO customerDTO);
+
+    Mono<CustomerDTO> patchCustomer(Integer customerId, CustomerDTO customerDTO);
 }
