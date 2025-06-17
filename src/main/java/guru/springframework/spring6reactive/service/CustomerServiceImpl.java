@@ -57,4 +57,9 @@ public class CustomerServiceImpl implements CustomerService {
                 })
                 .map(customerMapper::customerToCustomerDto);
     }
+
+    @Override
+    public Mono<Void> deleteById(Integer customerId) {
+        return customerRepository.deleteById(customerId);
+    }
 }

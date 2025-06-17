@@ -5,6 +5,7 @@ import guru.springframework.spring6reactive.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,5 +57,11 @@ public class CustomerController {
                                              @Validated @RequestBody CustomerDTO customerDTO) {
         return customerService.patchCustomer(customerId, customerDTO)
                 .map(_ -> ResponseEntity.noContent().build());
+    }
+
+    @DeleteMapping(CUSTOMER_PATH_ID)
+    Mono<ResponseEntity<Void>> deleteById(@PathVariable("customerId") Integer customerId) {
+        return customerService.deleteById(customerId)
+                .thenReturn(ResponseEntity.noContent().build());
     }
 }
