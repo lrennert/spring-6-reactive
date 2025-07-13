@@ -31,7 +31,7 @@ public class BeerRepositoryTest {
                 .subscribe(beer -> System.out.println(beer.toString()));
     }
 
-    private Beer createTestBeer() {
+    public static Beer createTestBeer() {
         return Beer.builder()
                 .beerName("Space Dust")
                 .beerStyle("IPA")
