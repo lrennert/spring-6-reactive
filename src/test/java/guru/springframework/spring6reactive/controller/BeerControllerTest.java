@@ -3,7 +3,10 @@ package guru.springframework.spring6reactive.controller;
 import guru.springframework.spring6reactive.mapper.BeerMapper;
 import guru.springframework.spring6reactive.model.BeerDTO;
 import guru.springframework.spring6reactive.repository.BeerRepositoryTest;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +16,7 @@ import reactor.core.publisher.Mono;
 import static guru.springframework.spring6reactive.controller.BeerController.BEER_PATH;
 import static guru.springframework.spring6reactive.controller.BeerController.BEER_PATH_ID;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 @AutoConfigureWebTestClient
 public class BeerControllerTest {
@@ -24,6 +28,7 @@ public class BeerControllerTest {
     BeerMapper beerMapper;
 
     @Test
+    @Order(1)
     void testListBeers() {
         webTestClient.get()
                 .uri(BEER_PATH)
@@ -34,6 +39,7 @@ public class BeerControllerTest {
     }
 
     @Test
+    @Order(2)
     void testGetBeerById() {
         webTestClient.get()
                 .uri(BEER_PATH_ID, 1)
@@ -44,6 +50,7 @@ public class BeerControllerTest {
     }
 
     @Test
+    @Order(4)
     void testCreateBeer() {
         webTestClient.post()
                 .uri(BEER_PATH)
@@ -55,6 +62,7 @@ public class BeerControllerTest {
     }
 
     @Test
+    @Order(3)
     void testUpdateBeer() {
         webTestClient.put()
                 .uri(BEER_PATH_ID, 1)
@@ -64,6 +72,7 @@ public class BeerControllerTest {
     }
 
     @Test
+    @Order(5)
     void testDeleteBeer() {
         webTestClient.delete()
                 .uri(BEER_PATH_ID, 1)
