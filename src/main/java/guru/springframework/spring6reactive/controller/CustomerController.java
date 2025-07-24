@@ -22,8 +22,8 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class CustomerController {
 
-    private static final String CUSTOMER_PATH = "/api/v2/customer";
-    private static final String CUSTOMER_PATH_ID = CUSTOMER_PATH + "/{customerId}";
+    public static final String CUSTOMER_PATH = "/api/v2/customer";
+    public static final String CUSTOMER_PATH_ID = CUSTOMER_PATH + "/{customerId}";
 
     private final CustomerService customerService;
 
