@@ -1,5 +1,6 @@
 package guru.springframework.spring6reactive.controller;
 
+import guru.springframework.spring6reactive.domain.Beer;
 import guru.springframework.spring6reactive.mapper.BeerMapper;
 import guru.springframework.spring6reactive.model.BeerDTO;
 import guru.springframework.spring6reactive.repository.BeerRepositoryTest;
@@ -50,7 +51,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    @Order(4)
+    @Order(3)
     void testCreateBeer() {
         webTestClient.post()
                 .uri(BEER_PATH)
@@ -62,13 +63,38 @@ public class BeerControllerTest {
     }
 
     @Test
-    @Order(3)
+    void testCreateBeerBadRequest() {
+        Beer testBeer = BeerRepositoryTest.createTestBeer();
+        testBeer.setBeerName("");
+
+        webTestClient.post()
+                .uri(BEER_PATH)
+                .body(Mono.just(beerMapper.beerToBeerDto(testBeer)), BeerDTO.class)
+                .header("Content-type", "application/json")
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    @Order(4)
     void testUpdateBeer() {
         webTestClient.put()
                 .uri(BEER_PATH_ID, 1)
                 .body(Mono.just(beerMapper.beerToBeerDto(BeerRepositoryTest.createTestBeer())), BeerDTO.class)
                 .exchange()
                 .expectStatus().isNoContent();
+    }
+
+    @Test
+    void testUpdateBeerBadRequest() {
+        BeerDTO testBeer = beerMapper.beerToBeerDto(BeerRepositoryTest.createTestBeer());
+        testBeer.setBeerStyle("");
+
+        webTestClient.put()
+                .uri(BEER_PATH_ID, 1)
+                .body(Mono.just(testBeer), BeerDTO.class)
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 
     @Test
