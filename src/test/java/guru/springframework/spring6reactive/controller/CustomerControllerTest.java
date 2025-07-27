@@ -45,6 +45,14 @@ public class CustomerControllerTest {
     }
 
     @Test
+    void testGetCustomerByIdNotFound() {
+        webTestClient.get()
+                .uri(CUSTOMER_PATH_ID, 999)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
     @Order(3)
     void testCreateNewCustomer() {
         webTestClient.post()
@@ -94,6 +102,16 @@ public class CustomerControllerTest {
     }
 
     @Test
+    void testUpdateCustomerNotFound() {
+        webTestClient.put()
+                .uri(CUSTOMER_PATH_ID, 999)
+                .body(Mono.just(createTestCustomer()), CustomerDTO.class)
+                .header("Content-type", "application/json")
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
     @Order(5)
     void testPatchCustomer() {
         webTestClient.patch()
@@ -106,12 +124,31 @@ public class CustomerControllerTest {
     }
 
     @Test
+    void testPatchCustomerNotFound() {
+        webTestClient.patch()
+                .uri(CUSTOMER_PATH_ID, 999)
+                .body(Mono.just(createTestCustomer()), CustomerDTO.class)
+                .header("Content-type", "application/json")
+                .exchange()
+                .expectStatus().isNotFound();
+
+    }
+
+    @Test
     @Order(6)
     void testDeleteById() {
         webTestClient.delete()
                 .uri(CUSTOMER_PATH_ID, 1)
                 .exchange()
                 .expectStatus().isNoContent();
+    }
+
+    @Test
+    void testDeleteByIdNotFound() {
+        webTestClient.delete()
+                .uri(CUSTOMER_PATH_ID, 999)
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     private static CustomerDTO createTestCustomer() {
