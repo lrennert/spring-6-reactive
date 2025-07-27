@@ -57,6 +57,19 @@ public class CustomerControllerTest {
     }
 
     @Test
+    void testCreateNewCustomerBadRequest() {
+        CustomerDTO testCustomer = createTestCustomer();
+        testCustomer.setCustomerName("A".repeat(256));
+
+        webTestClient.post()
+                .uri(CUSTOMER_PATH)
+                .body(Mono.just(testCustomer), CustomerDTO.class)
+                .header("Content-type", "application/json")
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
     @Order(4)
     void testUpdateCustomer() {
         webTestClient.put()
@@ -65,6 +78,19 @@ public class CustomerControllerTest {
                 .header("Content-type", "application/json")
                 .exchange()
                 .expectStatus().isNoContent();
+    }
+
+    @Test
+    void testUpdateCustomerBadRequest() {
+        CustomerDTO testCustomer = createTestCustomer();
+        testCustomer.setCustomerName("A".repeat(256));
+
+        webTestClient.put()
+                .uri(CUSTOMER_PATH_ID, 1)
+                .body(Mono.just(testCustomer), CustomerDTO.class)
+                .header("Content-type", "application/json")
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 
     @Test
