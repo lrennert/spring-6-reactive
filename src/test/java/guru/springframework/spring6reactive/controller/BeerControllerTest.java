@@ -116,6 +116,25 @@ public class BeerControllerTest {
 
     @Test
     @Order(5)
+    void testPatchBeer() {
+        webTestClient.patch()
+                .uri(BEER_PATH_ID, 1)
+                .body(Mono.just(beerMapper.beerToBeerDto(BeerRepositoryTest.createTestBeer())), BeerDTO.class)
+                .exchange()
+                .expectStatus().isNoContent();
+    }
+
+    @Test
+    void testPatchBeerNotFound() {
+        webTestClient.patch()
+                .uri(BEER_PATH_ID, 999)
+                .body(Mono.just(beerMapper.beerToBeerDto(BeerRepositoryTest.createTestBeer())), BeerDTO.class)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    @Order(6)
     void testDeleteBeer() {
         webTestClient.delete()
                 .uri(BEER_PATH_ID, 1)
