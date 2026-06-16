@@ -1,6 +1,10 @@
 package guru.springframework.spring6reactive.controller;
 
+import guru.springframework.spring6reactive.domain.Customer;
 import guru.springframework.spring6reactive.model.CustomerDTO;
+import guru.springframework.spring6reactive.repository.CustomerRepository;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -8,8 +12,12 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static guru.springframework.spring6reactive.controller.CustomerController.CUSTOMER_PATH;
 import static guru.springframework.spring6reactive.controller.CustomerController.CUSTOMER_PATH_ID;
@@ -18,10 +26,28 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 @AutoConfigureWebTestClient
+@ActiveProfiles("test")
 public class CustomerControllerTest {
 
     @Autowired
     WebTestClient webTestClient;
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    Customer savedCustomer;
+
+    @BeforeEach
+    void setUp() {
+        customerRepository.deleteAll().block();
+
+        List<Customer> customers = customerRepository.saveAll(createCustomers())
+                .collectList()
+                .block();
+
+        Assertions.assertNotNull(customers);
+        savedCustomer = customers.getFirst();
+    }
 
     @Test
     @Order(1)
@@ -42,7 +68,7 @@ public class CustomerControllerTest {
         webTestClient
                 .mutateWith(mockOAuth2Login())
                 .get()
-                .uri(CUSTOMER_PATH_ID, 1)
+                .uri(CUSTOMER_PATH_ID, savedCustomer.getId())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().valueEquals("Content-type", "application/json")
@@ -70,7 +96,8 @@ public class CustomerControllerTest {
                 .header("Content-type", "application/json")
                 .exchange()
                 .expectStatus().isCreated()
-                .expectHeader().location("http://localhost:8080/api/v2/customer/4");
+                //.expectHeader().location("http://localhost:8080/api/v2/customer/4")
+                .expectHeader().valueMatches("Location", ".*/api/v2/customer/\\d+");
     }
 
     @Test
@@ -94,7 +121,7 @@ public class CustomerControllerTest {
         webTestClient
                 .mutateWith(mockOAuth2Login())
                 .put()
-                .uri(CUSTOMER_PATH_ID, 1)
+                .uri(CUSTOMER_PATH_ID, savedCustomer.getId())
                 .body(Mono.just(createTestCustomer()), CustomerDTO.class)
                 .header("Content-type", "application/json")
                 .exchange()
@@ -134,7 +161,7 @@ public class CustomerControllerTest {
         webTestClient
                 .mutateWith(mockOAuth2Login())
                 .patch()
-                .uri(CUSTOMER_PATH_ID, 1)
+                .uri(CUSTOMER_PATH_ID, savedCustomer.getId())
                 .body(Mono.just(createTestCustomer()), CustomerDTO.class)
                 .header("Content-type", "application/json")
                 .exchange()
@@ -161,7 +188,7 @@ public class CustomerControllerTest {
         webTestClient
                 .mutateWith(mockOAuth2Login())
                 .delete()
-                .uri(CUSTOMER_PATH_ID, 1)
+                .uri(CUSTOMER_PATH_ID, savedCustomer.getId())
                 .exchange()
                 .expectStatus().isNoContent();
     }
@@ -180,5 +207,27 @@ public class CustomerControllerTest {
         return CustomerDTO.builder()
                 .customerName("Loki")
                 .build();
+    }
+
+    private List<Customer> createCustomers() {
+        Customer customer1 = Customer.builder()
+                .customerName("Iron Man")
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
+                .build();
+
+        Customer customer2 = Customer.builder()
+                .customerName("Bruce Banner")
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
+                .build();
+
+        Customer customer3 = Customer.builder()
+                .customerName("Captain America")
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
+                .build();
+
+        return List.of(customer1, customer2, customer3);
     }
 }

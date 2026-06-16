@@ -6,6 +6,7 @@ import guru.springframework.spring6reactive.repository.BeerRepository;
 import guru.springframework.spring6reactive.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
+@Profile("!test")
 public class BootStrapData implements CommandLineRunner {
 
     private final BeerRepository beerRepository;
@@ -68,29 +70,29 @@ public class BootStrapData implements CommandLineRunner {
 
     private void loadCustomerData() {
         customerRepository.count().subscribe(count -> {
-           if (count == 0) {
-               Customer customer1 = Customer.builder()
-                       .customerName("Iron Man")
-                       .createdDate(LocalDateTime.now())
-                       .lastModifiedDate(LocalDateTime.now())
-                       .build();
+            if (count == 0) {
+                Customer customer1 = Customer.builder()
+                        .customerName("Iron Man")
+                        .createdDate(LocalDateTime.now())
+                        .lastModifiedDate(LocalDateTime.now())
+                        .build();
 
-               Customer customer2 = Customer.builder()
-                       .customerName("Bruce Banner")
-                       .createdDate(LocalDateTime.now())
-                       .lastModifiedDate(LocalDateTime.now())
-                       .build();
+                Customer customer2 = Customer.builder()
+                        .customerName("Bruce Banner")
+                        .createdDate(LocalDateTime.now())
+                        .lastModifiedDate(LocalDateTime.now())
+                        .build();
 
-               Customer customer3 = Customer.builder()
-                       .customerName("Captain America")
-                       .createdDate(LocalDateTime.now())
-                       .lastModifiedDate(LocalDateTime.now())
-                       .build();
+                Customer customer3 = Customer.builder()
+                        .customerName("Captain America")
+                        .createdDate(LocalDateTime.now())
+                        .lastModifiedDate(LocalDateTime.now())
+                        .build();
 
-               customerRepository.save(customer1).subscribe();
-               customerRepository.save(customer2).subscribe();
-               customerRepository.save(customer3).subscribe();
-           }
+                customerRepository.save(customer1).subscribe();
+                customerRepository.save(customer2).subscribe();
+                customerRepository.save(customer3).subscribe();
+            }
         });
     }
 }
